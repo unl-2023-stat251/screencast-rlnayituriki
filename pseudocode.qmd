@@ -1,8 +1,41 @@
 ---
-author: "Your Name"
+author: "Roberto"
 date: "2023-04-20"
 title: "Screencast Pseudocode"
 output: html
 categories: project
 ---
+
+
+Things you plan to investigate using this dataset:
+
+- Types of ingredients and quantities used in beer production over time
+
+. Using the brewing materials dataset, I will make a barplot (geom_col) for type and month_current variables, and fill using material_type. I will filter out anything that says total to exclude the totals and only keep individual values.
+
+
+
+- Relationship between total barrels produced and brewery size
+.Since brewery size is not a definite number, I can't do correlation analysis, I will just do visualize the data as is.
+. From the brewer size dataset, I will create a graph showing the barrel number and brew size
+. Potentially look at where the beer is produced (might require a map)
+
+
+
+
+- Number of barrels consumed on premises vs barrels that end up in bottles&cans over time
+. Group by states and year
+. Calculate the percentage of barrels consumed (barrels/sum(barrels))
+. filter those consumed only on premises and then in botles/cans
+. make a map that sorts colors based on percentages
+
+
+
+
+- Number of barrels that are tax free and exported (Actually I can look at percent change since I have values for current and prior year)
+. Filter out barrels that are tax free (from tax status column) and for export(in type column)
+. Calculate the percent change ((current year value-prior year value)/prior year value)*100
+.Create a graph that shows change over the years
+
+
 
