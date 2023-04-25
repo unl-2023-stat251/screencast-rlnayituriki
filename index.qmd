@@ -43,3 +43,10 @@ There will be three deliverables for this project:
 
 In lieu of the final exam, you will peer review two classmates' screencasts. 
 
+
+
+```{r}
+x <- sample( 1:52, 1)
+
+
+```
