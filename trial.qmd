@@ -39,8 +39,10 @@ tuesdata <- tidytuesdayR::tt_load(2020, week = 14)
 
 brewing_materials <- tuesdata$brewing_materials
 
-brewing_materials %>%
-  mutate(date=ymd(paste(year,month,1)))
+brewing_materials <- brewing_materials %>%
+  mutate(date=ymd(paste(year,month,1))) %>%
+  filter(year<2016)
+  
   
 ```
 
@@ -48,35 +50,15 @@ brewing_materials %>%
 
 . Using the brewing materials dataset, I will make a barplot (geom_col) for type and month_current variables, and fill using material_type. I will filter out anything that says total to exclude the totals and only keep individual values.
 
+-   Relationship between total barrels produced and brewery size .Since brewery size is not a definite number, I can't do correlation analysis, I will just do visualize the data as is. .
 
+From the brewer size dataset, I will create a graph showing the barrel number and brew size . Potentially look at where the beer is produced (might require a map)
 
+-   Number of barrels consumed on premises vs barrels that end up in bottles&cans over time . Group by states and year . Calculate the percentage of barrels consumed (barrels/sum(barrels)) . filter those consumed only on premises and then in botles/cans . make a map that sorts colors based on percentages
 
-- Relationship between total barrels produced and brewery size
-.Since brewery size is not a definite number, I can't do correlation analysis, I will just do visualize the data as is.
-.
+-   
 
-From the brewer size dataset, I will create a graph showing the barrel number and brew size
-. Potentially look at where the beer is produced (might require a map)
-
-
-
-
-- Number of barrels consumed on premises vs barrels that end up in bottles&cans over time
-. Group by states and year
-. Calculate the percentage of barrels consumed (barrels/sum(barrels))
-. filter those consumed only on premises and then in botles/cans
-. make a map that sorts colors based on percentages
-
-
-
-
--
-
-Number of barrels that are tax free and exported (Actually I can look at percent change since I have values for current and prior year)
-. Filter out barrels that are tax free (from tax status column) and for export(in type column)
-. Calculate the percent change ((current year value-prior year value)/prior year value)\*100
-.Create a graph that shows change over the years
-
+Number of barrels that are tax free and exported (Actually I can look at percent change since I have values for current and prior year) . Filter out barrels that are tax free (from tax status column) and for export(in type column) . Calculate the percent change ((current year value-prior year value)/prior year value)\*100 .Create a graph that shows change over the years
 
 ```{r}
 #Question1
@@ -90,9 +72,9 @@ brewing_materials%>%
 #Material Used
 brewing_materials %>%
   filter(!str_detect(material_type,"Total")) %>% 
-  mutate(type=fct_reorder(type,month_current, sum)) %>% 
+  mutate(type=fct_reorder(type,month_current,sum)) %>% 
   ggplot(aes(date,month_current,fill=type))+geom_col()+
-  scale_y_continuous(labels=scales::comma) +
+  scale_y_continuous(labels=scales::comma) +theme_bw()
   labs(x="Time",y="Pounds used in beer production",fill="Material Used")
 
 #Grain or No Grain
@@ -100,7 +82,7 @@ brewing_materials %>%
   filter(str_detect(material_type,"Total.*products")) %>% 
   mutate(type=fct_reorder(type,month_current, sum)) %>% 
   ggplot(aes(date,month_current,fill=type))+geom_col()+
-  scale_y_continuous(labels=scales::comma) +
+  scale_y_continuous(labels=scales::comma) + theme_bw()
   labs(x="Time",y="Pounds used in beer production",fill="Material Used")
 
 
@@ -110,4 +92,13 @@ brewing_materials %>%
 
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+BREWER SIZE AND BARRELS PRODUCED
+
+```{r}
+
+brewer_size %>% 
+  filter(brewer_size !="Total",!is.na(total_barrels)) %>% 
+  mutate(brewer_size=fct_reorder(brewer_size,total_barrels)) %>% 
+  ggplot(aes(year,total_barrels,fill=brewer_size))+geom_col()
+
+```
