@@ -92,7 +92,7 @@ brewing_materials %>%
 
 ```
 
-BREWER SIZE AND BARRELS PRODUCED
+BREWER SIZE AND NUMBER OF BREWERIES
 
 ```{r}
 brewer_size <- brewer_size %>% 
@@ -120,4 +120,10 @@ brewer_size %>%
   geom_col() +
   #scale_fill_continuous(trans = "log10") + 
   scale_x_continuous(breaks = 2009:2020)
+```
+
+NUMBER OF BARRELS CONSUMED ON PREMISES VS THOSE THAT END UP IN BOTTLES/CANS
+
+```{r}
+
 ```
