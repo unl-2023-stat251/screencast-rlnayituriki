@@ -95,10 +95,29 @@ brewing_materials %>%
 BREWER SIZE AND BARRELS PRODUCED
 
 ```{r}
+brewer_size <- brewer_size %>% 
+  filter(brewer_size !="Total",!is.na(total_barrels)) %>% 
+  mutate(avg_barrels = total_barrels/n_of_brewers) %>%
+  mutate(brewer_size = fct_reorder(brewer_size,avg_barrels))
+brewer_size %>%
+  ggplot(aes(x = brewer_size, y = total_barrels)) + geom_jitter() + coord_flip()
 
 brewer_size %>% 
-  filter(brewer_size !="Total",!is.na(total_barrels)) %>% 
-  mutate(brewer_size=fct_reorder(brewer_size,total_barrels)) %>% 
-  ggplot(aes(year,total_barrels,fill=brewer_size))+geom_col()
+  ggplot(aes(year,total_barrels,fill=brewer_size))+geom_col() + scale_fill_viridis_d()
 
+brewer_size <- brewer_size %>%
+  separate(brewer_size, into = c("lower", "upper"), sep = " to", remove = F) %>%
+  mutate(upper = ifelse(lower == "Under 1 Barrel", 1, upper),
+         upper = ifelse(lower == "Zero Barrels", 0, upper),
+         lower = str_remove_all(lower, "[^\\d]"),
+         upper = str_remove(upper, " Barrels")) %>%
+  mutate(across(lower:upper, parse_number)) %>%
+  mutate(upper = ifelse(brewer_size == "6,000,001 Barrels and Over", Inf, upper),
+         lower = ifelse(brewer_size %in% c("Zero Barrels", "Under 1 Barrel"), 0, lower))
+
+brewer_size %>%
+  ggplot(aes(year, n_of_brewers, fill = factor(brewer_size))) +
+  geom_col() +
+  #scale_fill_continuous(trans = "log10") + 
+  scale_x_continuous(breaks = 2009:2020)
 ```
