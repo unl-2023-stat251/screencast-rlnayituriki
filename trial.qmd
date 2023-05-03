@@ -11,17 +11,17 @@ Reading data
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(knitr)
+library(maps)
 #install.packages("tidytuesdayR")
 ```
 
 ```{r}
 
 
-
 # Get the Data
 
 brewing_materials <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/brewing_materials.csv')
-
 beer_taxed <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/beer_taxed.csv')
 brewer_size <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/brewer_size.csv')
 beer_states <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-03-31/beer_states.csv')
@@ -48,17 +48,15 @@ brewing_materials <- brewing_materials %>%
 
 \- Types of ingredients and quantities used in beer production over time
 
-. Using the brewing materials dataset, I will make a barplot (geom_col) for type and month_current variables, and fill using material_type. I will filter out anything that says total to exclude the totals and only keep individual values.
+. Using the brewing materials data set, I will make a bar plot (geom_col) for type and month_current variables, and fill using material_type. I will filter out anything that says total to exclude the totals and only keep individual values.
 
 -   Relationship between total barrels produced and brewery size .Since brewery size is not a definite number, I can't do correlation analysis, I will just do visualize the data as is. .
 
-From the brewer size dataset, I will create a graph showing the barrel number and brew size . Potentially look at where the beer is produced (might require a map)
+From the brewer size data set, I will create a graph showing the barrel number and brew size . Potentially look at where the beer is produced (might require a map)
 
--   Number of barrels consumed on premises vs barrels that end up in bottles&cans over time . Group by states and year . Calculate the percentage of barrels consumed (barrels/sum(barrels)) . filter those consumed only on premises and then in botles/cans . make a map that sorts colors based on percentages
+-   Number of barrels consumed on premises vs barrels that end up in bottles&cans over time . Group by states and year . Calculate the percentage of barrels consumed (barrels/sum(barrels)) . filter those consumed only on premises and then in bottles/cans . make a map that sorts colors based on percentages
 
--   
 
-Number of barrels that are tax free and exported (Actually I can look at percent change since I have values for current and prior year) . Filter out barrels that are tax free (from tax status column) and for export(in type column) . Calculate the percent change ((current year value-prior year value)/prior year value)\*100 .Create a graph that shows change over the years
 
 ```{r}
 #Question1
@@ -125,5 +123,43 @@ brewer_size %>%
 NUMBER OF BARRELS CONSUMED ON PREMISES VS THOSE THAT END UP IN BOTTLES/CANS
 
 ```{r}
+ beer_states %>%
+  filter(year==max(year),state!="total") %>% 
+  group_by(state) %>% 
+  mutate(percent_cons=round(barrels/sum(barrels)*100)) %>%
+  filter(type=='On Premises') %>% 
+  arrange(desc(percent_cons)) %>%
+  kable(caption = "Percentage of Beer Consumed on Premises") 
+ 
+  
+
+
+
+
 
 ```
+
+
+**Trends in Exported Tax Free Barrels Over time**
+Number of barrels that are tax free and exported (Actually I can look at percent change since I have values for current and prior year) . Filter out barrels that are tax free (from tax status column) and for export(in type column) . Calculate the percent change ((current year value-prior year value)/prior year value)\*100 .Create a graph that shows change over the years
+
+```{r}
+beer_taxed %>% 
+  filter(tax_status=='Tax Free',type=='For export') %>% 
+  mutate(percent_increase=((month_current-month_prior_year)/month_prior_year)*100) %>% 
+  ggplot(aes(x=year))+
+  geom_line(aes(y=month_current))
+ 
+```
+```{r}
+beer_taxed %>% 
+  filter(tax_status=='Tax Free',type=='For export') %>%
+  group_by(year) %>% 
+  summarize(avg=mean(month_current)) %>% 
+  ggplot(aes(year,avg,fill='red'))+geom_line()+scale_x_continuous(breaks = 2009:2020)
+  
+  
+  
+```
+
+Basically, I want to plot the trends in 
