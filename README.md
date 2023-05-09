@@ -3,7 +3,8 @@ screencast-rlnayituriki created by GitHub Classroom
 Here below is a link to my recording:
 https://youtu.be/4yz0PQod9xA
 
-Tmestamps:
+**Tmestamps:**
+
 00:00-04:30 Introduction
 
 04:31-28:00 Brewing_materials dataset (dpylr verbs,dates, and visualization)
